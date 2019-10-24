@@ -4,8 +4,8 @@ from .wireframe import Wireframe
 
 class ProjectWireframe(models.Model):
 
-    wireframe = models.ForeignKey(Wireframe, on_delete=models.CASCADE, related_name="wireframe")
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project")
+    wireframe = models.ForeignKey(Wireframe, on_delete=models.CASCADE, related_name="projectwireframe")
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="projectwireframe")
 
     class Meta:
         verbose_name = ("project wireframe")

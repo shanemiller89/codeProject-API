@@ -12,7 +12,7 @@ class Project(models.Model):
     wireframes = models.ManyToManyField("Wireframe", through="ProjectWireframe")
     tasks = models.ManyToManyField("Task", through="ProjectTask")
     supplemental = models.ManyToManyField("Supplemental", through="ProjectSupplemental")
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    # user = models.ForeignKey(User, on_delete=models.PROTECT)
 
     class Meta:
         ordering = ["title"]
