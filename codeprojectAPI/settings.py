@@ -65,9 +65,6 @@ AUTHENTICATION_BACKENDS = (
    'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_GITHUB_KEY = 'be386a1d5a1ba8c21c97'
-SOCIAL_AUTH_GITHUB_SECRET = 'b2dc3a31ae3583aad769dad418fcade321941253'
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
