@@ -1,3 +1,4 @@
+from .coder import Coder
 from .project_collaborator import ProjectCollaborator
 from .project_supplemental import ProjectSupplemental
 from .project_task import ProjectTask
