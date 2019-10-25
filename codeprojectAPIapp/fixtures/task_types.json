@@ -1,0 +1,30 @@
+[
+    {
+      "model": "codeprojectAPIapp.TaskType",
+      "pk": 1,
+      "fields": {
+        "type": "Incoming"
+      }
+    },
+    {
+        "model": "codeprojectAPIapp.TaskType",
+        "pk": 2,
+        "fields": {
+          "type": "In Progress"
+        }
+      },
+      {
+        "model": "codeprojectAPIapp.TaskType",
+        "pk": 3,
+        "fields": {
+          "type": "In Review"
+        }
+      },
+      {
+        "model": "codeprojectAPIapp.TaskType",
+        "pk": 4,
+        "fields": {
+          "type": "Completed"
+        }
+      }
+  ]

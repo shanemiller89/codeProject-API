@@ -1,0 +1,23 @@
+[
+    {
+      "model": "codeprojectAPIapp.SupplementalType",
+      "pk": 1,
+      "fields": {
+        "type": "Note"
+      }
+    },
+    {
+        "model": "codeprojectAPIapp.SupplementalType",
+        "pk": 2,
+        "fields": {
+          "type": "Code"
+        }
+      },
+      {
+        "model": "codeprojectAPIapp.SupplementalType",
+        "pk": 3,
+        "fields": {
+          "type": "Image"
+        }
+      }
+  ]

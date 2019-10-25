@@ -48,7 +48,6 @@ def register_user(request):
     Method arguments:
       request -- The full HTTP request object
     '''
-    # try:
     
     # Load the JSON string of the request body into a dict
     req_body = json.loads(request.body.decode())
@@ -90,6 +89,3 @@ def register_user(request):
     # Return the token to the client
     data = json.dumps({"token": token.key})
     return HttpResponse(data, content_type='application/json')
-
-    # except IntegrityError as ex:
-    #     return HttpResponse(ex, content_type='application/json')

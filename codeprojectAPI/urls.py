@@ -17,10 +17,18 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from django.contrib import admin
-from codeprojectAPIapp.views import register_user, login_user
+from codeprojectAPIapp.views import register_user, login_user, Coders, UserViewSet, TechnologyTypes, TaskTypes, Tasks, SupplementalTypes, Technologies
 
 
 router = routers.DefaultRouter(trailing_slash=False)
+
+router.register(r'tasks', Tasks, 'task')
+router.register(r'supplementaltypes', SupplementalTypes, 'supplementaltype')
+router.register(r'tasktypes', TaskTypes, 'tasktype')
+router.register(r'technologies', Technologies, 'technology')
+router.register(r'technologytypes', TechnologyTypes, 'technologytype')
+router.register(r'coders', Coders, 'coder')
+router.register(r'users', UserViewSet, 'user')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
