@@ -5,7 +5,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from codeprojectAPIapp.models import Project, Coder
+from codeprojectAPIapp.models import Project, Coder, Technology, ProjectTechnology
 from rest_framework.decorators import action
 
 
@@ -21,11 +21,50 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             view_name='project',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'title', 'repo', 'overview', 'project_image', 'erd_image', 'private', 'technologies', 'wireframes', 'tasks', 'supplementals', 'collaborators', 'owner')
+        fields = ('id', 'url', 'title', 'repo', 'overview', 'project_image', 'erd_image', 'private',
+                  'technologies', 'wireframes', 'tasks', 'supplementals', 'collaborators', 'owner')
         depth = 1
 
 
 class Projects(ViewSet):
+
+    def create(self, request):
+        """Handle POST operations
+
+        Returns:
+            Response -- JSON serialized Project instance
+        """
+        project = Project()
+        project.title = request.data["title"]
+        project.repo = request.data["repo"]
+        project.overview = request.data["overview"]
+        project.private = request.data["private"]
+        project.project_image = request.data["project_image"]
+        project.owner = Coder.objects.get(user=request.auth.user)
+        project.save()
+
+        primary_technology = Technology()
+        primary_technology.technology_type_id = 1
+        primary_technology.technology = request.data["primary_technology"]
+        primary_technology.save()
+
+        primary_project_technology = ProjectTechnology()
+        primary_project_technology.project = project
+        primary_project_technology.technology = primary_technology
+        primary_project_technology.save()
+
+        # archive_item = LibraryArchive()
+        # archive_item.library = Library.objects.get(pk=request.data["library_id"])
+        # new_archive = Archive()
+        # new_archive.title = request.data["title"]
+        # new_archive.link = request.data["link"]
+        # new_archive.save()
+        # archive_item.archive = new_archive
+
+
+        serializer = ProjectSerializer(project, context={'request': request})
+
+        return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single project
@@ -35,11 +74,11 @@ class Projects(ViewSet):
         """
         try:
             project = Project.objects.get(pk=pk)
-            serializer = ProjectSerializer(project, context={'request': request})
+            serializer = ProjectSerializer(
+                project, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
-
 
     """Projects for codeProject"""
 
@@ -58,12 +97,12 @@ class Projects(ViewSet):
         )
         return Response(serializer.data)
 
-
     @action(methods=['get'], detail=False)
     def owner(self, request):
 
         current_user = Coder.objects.get(user=request.auth.user)
         projects = Project.objects.get(owner=current_user)
 
-        serializer = ProjectSerializer(projects, many=False, context={'request': request})
+        serializer = ProjectSerializer(
+            projects, many=False, context={'request': request})
         return Response(serializer.data)
