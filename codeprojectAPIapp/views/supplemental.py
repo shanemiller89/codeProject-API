@@ -4,65 +4,65 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from codeprojectAPIapp.models import Technology 
+from codeprojectAPIapp.models import Supplemental
 
 
-class TechnologySerializer(serializers.HyperlinkedModelSerializer):
+class SupplementalSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for payment
 
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
     class Meta:
-        model = Technology
+        model = Supplemental
         url = serializers.HyperlinkedIdentityField(
-            view_name='technology',
+            view_name='supplemental',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'technology', 'technology_type_id')
+        fields = ('id', 'url','title', 'text', 'language', 'supplemental_image', 'pinned', 'supplemental_type_id')
 
 
-class Technologies(ViewSet):
+class Supplementals(ViewSet):
 
     def update(self, request, pk=None):
-        """Handle PUT requests for a Technology
+        """Handle PUT requests for a Supplemental
 
         Returns:
             Response -- Empty body with 204 status code
         """
-        technology = Technology.objects.get(pk=pk)
-        technology.profile_image = request.data["profile_image"]
+        supplemental = Supplemental.objects.get(pk=pk)
+        supplemental.profile_image = request.data["profile_image"]
 
-        technology.save()
+        supplemental.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def retrieve(self, request, pk=None):
-        """Handle GET requests for single technology
+        """Handle GET requests for single task
         Methods:  GET
         Returns:
-            Response -- JSON serialized technology instance
+            Response -- JSON serialized task instance
         """
         try:
-            technology = Technology.objects.get(pk=pk)
-            serializer = TechnologySerializer(technology, context={'request': request})
+            supplemental = Supplemental.objects.get(pk=pk)
+            serializer = SupplementalSerializer(supplemental, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
 
 
-    """Technologies for codeProject"""
+    """Supplementals for codeProject"""
 
     def list(self, request):
-        """Handle GET requests to Technology resource
+        """Handle GET requests to Supplemental resource
 
         Returns:
-            Response -- JSON serialized list of Technologies
+            Response -- JSON serialized list of Supplementals
         """
-        technologies = Technology.objects.all()
+        supplementals = Supplemental.objects.all()
 
-        serializer = TechnologySerializer(
-            technologies,
+        serializer = SupplementalSerializer(
+            supplementals,
             many=True,
             context={'request': request}
         )
