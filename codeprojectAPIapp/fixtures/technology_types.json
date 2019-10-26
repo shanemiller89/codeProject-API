@@ -1,0 +1,16 @@
+[
+    {
+      "model": "codeprojectAPIapp.TechnologyType",
+      "pk": 1,
+      "fields": {
+        "type": "Main"
+      }
+    },
+    {
+        "model": "codeprojectAPIapp.TechnologyType",
+        "pk": 2,
+        "fields": {
+          "type": "Supplemental"
+        }
+      }
+  ]

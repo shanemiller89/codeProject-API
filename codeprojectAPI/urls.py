@@ -17,10 +17,28 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from django.contrib import admin
-from codeprojectAPIapp.views import register_user, login_user
-
+from codeprojectAPIapp.views import register_user, login_user, Coders, UserViewSet, TechnologyTypes, TaskTypes, Tasks, SupplementalTypes, Technologies
+from codeprojectAPIapp.views import Wireframes, Supplementals, ProjectCollaborators, ProjectSupplementals, ProjectTasks
+from codeprojectAPIapp.views import ProjectTechnologies, ProjectWireframes, Projects
 
 router = routers.DefaultRouter(trailing_slash=False)
+
+router.register(r'supplementals', Supplementals, 'supplemental')
+router.register(r'tasks', Tasks, 'task')
+router.register(r'technologies', Technologies, 'technology')
+router.register(r'wireframes', Wireframes, 'wireframe')
+router.register(r'projectcollaborators',ProjectCollaborators, 'projectcollaborator')
+router.register(r'projectsupplementals',ProjectSupplementals, 'projectsupplemental')
+router.register(r'projecttasks', ProjectTasks, 'projecttask')
+router.register(r'projecttechnologies', ProjectTechnologies, 'projecttechnology')
+router.register(r'projectwireframes', ProjectWireframes, 'projectwireframe')
+router.register(r'projectwireframes', ProjectWireframes, 'projectwireframe')
+router.register(r'projects', Projects, 'project')
+router.register(r'supplementaltypes', SupplementalTypes, 'supplementaltype')
+router.register(r'tasktypes', TaskTypes, 'tasktype')
+router.register(r'technologytypes', TechnologyTypes, 'technologytype')
+router.register(r'coders', Coders, 'coder')
+router.register(r'users', UserViewSet, 'user')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
