@@ -53,13 +53,18 @@ class Projects(ViewSet):
         primary_project_technology.technology = primary_technology
         primary_project_technology.save()
 
-        # archive_item = LibraryArchive()
-        # archive_item.library = Library.objects.get(pk=request.data["library_id"])
-        # new_archive = Archive()
-        # new_archive.title = request.data["title"]
-        # new_archive.link = request.data["link"]
-        # new_archive.save()
-        # archive_item.archive = new_archive
+        supplemental_technologies = request.data["supplemental_technologies"]
+
+        for technology in supplemental_technologies:
+
+            supplemental_technology = Technology()
+            supplemental_technology.technology_type_id = 2
+            supplemental_technology.technology = technology
+            supplemental_technology.save()
+            supplemental_project_technology = ProjectTechnology()
+            supplemental_project_technology.project = project
+            supplemental_project_technology.technology = supplemental_technology
+            supplemental_project_technology.save()
 
 
         serializer = ProjectSerializer(project, context={'request': request})
@@ -100,9 +105,10 @@ class Projects(ViewSet):
     @action(methods=['get'], detail=False)
     def owner(self, request):
 
+        projects = Project.objects.all()
         current_user = Coder.objects.get(user=request.auth.user)
-        projects = Project.objects.get(owner=current_user)
+        projects = Project.objects.filter(owner=current_user)
 
         serializer = ProjectSerializer(
-            projects, many=False, context={'request': request})
+            projects, many=True, context={'request': request})
         return Response(serializer.data)
