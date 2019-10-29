@@ -130,3 +130,28 @@ class Projects(ViewSet):
         serializer = ProjectSerializer(
             projects, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @action(methods=['put'], detail=False)
+    def overview(self, request):
+        """Handle PUT requests for Project Overview
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        project = Project.objects.get(pk=request.data["id"])
+        project.overview = request.data["overview"]
+        project.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['put'], detail=False)
+    def erd(self, request):
+        """Handle PUT requests for Project Overview
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        project = Project.objects.get(pk=request.data["id"])
+        project.erd_image = request.data["erd_image"]
+        project.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
