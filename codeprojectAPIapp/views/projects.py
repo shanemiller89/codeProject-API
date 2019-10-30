@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from codeprojectAPIapp.models import Project, Coder, Technology, ProjectTechnology
+from .wireframes import WireframeSerializer
 from rest_framework.decorators import action
 
 
@@ -15,6 +16,9 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
+
+    wireframes = WireframeSerializer(many=True)
+
     class Meta:
         model = Project
         url = serializers.HyperlinkedIdentityField(
