@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from codeprojectAPIapp.models import Wireframe, ProjectWireframe
+from rest_framework.decorators import action
+
 
 
 class WireframeSerializer(serializers.HyperlinkedModelSerializer):
@@ -104,3 +106,16 @@ class Wireframes(ViewSet):
             context={'request': request}
         )
         return Response(serializer.data)
+
+    @action(methods=['put'], detail=False)
+    def updatewireframe(self, request):
+        """Handle PUT requests for Project Overview
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        wireframe = Wireframe.objects.get(pk=request.data["id"])
+        wireframe.wireframe_image = request.data["wireframe_image"]
+
+        wireframe.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
