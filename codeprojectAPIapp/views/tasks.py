@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from codeprojectAPIapp.models import Task, ProjectTask
+from rest_framework.decorators import action
+
 
 
 class TaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -51,11 +53,29 @@ class Tasks(ViewSet):
             Response -- Empty body with 204 status code
         """
         task = Task.objects.get(pk=pk)
-        task.profile_image = request.data["profile_image"]
+        task.task = request.data["task"]
 
         task.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    def destroy(self, request, pk=None):
+        """Handle DELETE requests for a single wireframe
+
+        Returns:
+            Response -- 200, 404, or 500 status code
+        """
+        try:
+            task = Task.objects.get(pk=pk)
+            task.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except Task.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single task
@@ -87,3 +107,15 @@ class Tasks(ViewSet):
             context={'request': request}
         )
         return Response(serializer.data)
+
+    @action(methods=['put'], detail=False)
+    def tasktype(self, request):
+        """Handle PUT requests for Project Overview
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        task = Task.objects.get(pk=request.data["id"])
+        task.task_type_id = request.data["task_type_id"]
+        task.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
