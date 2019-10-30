@@ -4,7 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from codeprojectAPIapp.models import Task
+from codeprojectAPIapp.models import Task, ProjectTask
 
 
 class TaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -23,6 +23,26 @@ class TaskSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class Tasks(ViewSet):
+
+    def create(self, request):
+        """Handle POST operations
+
+        Returns:
+            Response -- JSON serialized Task instance
+        """
+        task = Task()
+        task.task = request.data["task"]
+        task.task_type_id = 1
+        task.save()
+
+        project_task = ProjectTask()
+        project_task.project_id = request.data["project_id"]
+        project_task.task = task
+        project_task.save()
+
+        serializer = TaskSerializer(task, context={'request': request})
+
+        return Response(serializer.data)
 
     def update(self, request, pk=None):
         """Handle PUT requests for a Task

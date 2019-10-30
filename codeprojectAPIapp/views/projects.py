@@ -8,6 +8,7 @@ from rest_framework import status
 from codeprojectAPIapp.models import Project, Coder, Technology, ProjectTechnology
 from .wireframes import WireframeSerializer
 from .technologies import TechnologySerializer
+from .tasks import TaskSerializer
 from rest_framework.decorators import action
 
 
@@ -20,6 +21,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
 
     wireframes = WireframeSerializer(many=True)
     technologies = TechnologySerializer(many=True)
+    tasks = TaskSerializer(many=True)
 
     class Meta:
         model = Project
