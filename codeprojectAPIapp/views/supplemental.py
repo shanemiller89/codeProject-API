@@ -4,7 +4,9 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from codeprojectAPIapp.models import Supplemental
+from codeprojectAPIapp.models import Supplemental, ProjectSupplemental
+from rest_framework.decorators import action
+
 
 
 class SupplementalSerializer(serializers.HyperlinkedModelSerializer):
@@ -24,18 +26,46 @@ class SupplementalSerializer(serializers.HyperlinkedModelSerializer):
 
 class Supplementals(ViewSet):
 
-    def update(self, request, pk=None):
-        """Handle PUT requests for a Supplemental
+    def create(self, request):
+        """Handle POST operations
 
         Returns:
-            Response -- Empty body with 204 status code
+            Response -- JSON serialized Task instance
         """
-        supplemental = Supplemental.objects.get(pk=pk)
-        supplemental.profile_image = request.data["profile_image"]
 
-        supplemental.save()
+        if request.data["supplemental_type_id"] == 1:
+            supplemental = Supplemental()
+            supplemental.title = request.data["title"]
+            supplemental.text = request.data["text"]
+            supplemental.supplemental_type_id = 1
+            supplemental.save()
 
-        return Response({}, status=status.HTTP_204_NO_CONTENT)
+            project_supplemental = ProjectSupplemental()
+            project_supplemental.project_id = request.data["project_id"]
+            project_supplemental.supplemental = supplemental
+            project_supplemental.save()
+
+        serializer = SupplementalSerializer(supplemental, context={'request': request})
+
+        return Response(serializer.data)
+
+    def destroy(self, request, pk=None):
+        """Handle DELETE requests for a single project
+
+        Returns:
+            Response -- 200, 404, or 500 status code
+        """
+        try:
+            supplemental = Supplemental.objects.get(pk=pk)
+            supplemental.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except Supplemental.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single task
@@ -67,3 +97,16 @@ class Supplementals(ViewSet):
             context={'request': request}
         )
         return Response(serializer.data)
+
+    @action(methods=['put'], detail=False)
+    def updatenote(self, request):
+        """Handle PUT requests for Project Overview
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        supplemental = Supplemental.objects.get(pk=request.data["supplemental_id"])
+        supplemental.title = request.data["title"]
+        supplemental.text = request.data["text"]
+        supplemental.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
