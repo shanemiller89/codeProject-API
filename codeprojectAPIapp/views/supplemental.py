@@ -60,7 +60,6 @@ class Supplementals(ViewSet):
 
         if request.data["supplemental_type_id"] == 3:
             supplemental = Supplemental()
-            supplemental.title = request.data["title"]
             supplemental.supplemental_image = request.data["supplemental_image"]
             supplemental.supplemental_type_id = 3
             supplemental.save()
@@ -146,6 +145,32 @@ class Supplementals(ViewSet):
         supplemental.title = request.data["title"]
         supplemental.text = request.data["text"]
         supplemental.language = request.data["language"]
+
+        supplemental.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['put'], detail=False)
+    def updateimage(self, request):
+        """Handle PUT requests for Project Overview
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        supplemental = Supplemental.objects.get(pk=request.data["supplemental_id"])
+        supplemental.supplemental_image = request.data["supplemental_image"]
+
+        supplemental.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['put'], detail=False)
+    def updateimagetitle(self, request):
+        """Handle PUT requests for Project Overview
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        supplemental = Supplemental.objects.get(pk=request.data["supplemental_id"])
+        supplemental.title = request.data["title"]
 
         supplemental.save()
 
