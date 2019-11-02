@@ -81,6 +81,23 @@ class Projects(ViewSet):
 
         return Response(serializer.data)
 
+    def update(self, request, pk=None):
+        """Handle PUT requests for a Project
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        project = Project.objects.get(pk=pk)
+        project.title = request.data["title"]
+        project.repo = request.data["repo"]
+        project.private = request.data["private"]
+        project.project_image = request.data["project_image"]
+
+
+        project.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
     def destroy(self, request, pk=None):
         """Handle DELETE requests for a single project
 
