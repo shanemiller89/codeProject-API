@@ -45,6 +45,19 @@ class Supplementals(ViewSet):
             project_supplemental.supplemental = supplemental
             project_supplemental.save()
 
+        if request.data["supplemental_type_id"] == 2:
+            supplemental = Supplemental()
+            supplemental.title = request.data["title"]
+            supplemental.text = request.data["text"]
+            supplemental.language = request.data["language"]
+            supplemental.supplemental_type_id = 2
+            supplemental.save()
+
+            project_supplemental = ProjectSupplemental()
+            project_supplemental.project_id = request.data["project_id"]
+            project_supplemental.supplemental = supplemental
+            project_supplemental.save()
+
         serializer = SupplementalSerializer(supplemental, context={'request': request})
 
         return Response(serializer.data)
@@ -107,6 +120,21 @@ class Supplementals(ViewSet):
         supplemental = Supplemental.objects.get(pk=request.data["supplemental_id"])
         supplemental.title = request.data["title"]
         supplemental.text = request.data["text"]
+        supplemental.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['put'], detail=False)
+    def updatecode(self, request):
+        """Handle PUT requests for Project Overview
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        supplemental = Supplemental.objects.get(pk=request.data["supplemental_id"])
+        supplemental.title = request.data["title"]
+        supplemental.text = request.data["text"]
+        supplemental.language = request.data["language"]
+
         supplemental.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
