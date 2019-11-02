@@ -58,6 +58,18 @@ class Supplementals(ViewSet):
             project_supplemental.supplemental = supplemental
             project_supplemental.save()
 
+        if request.data["supplemental_type_id"] == 3:
+            supplemental = Supplemental()
+            supplemental.title = request.data["title"]
+            supplemental.supplemental_image = request.data["supplemental_image"]
+            supplemental.supplemental_type_id = 3
+            supplemental.save()
+
+            project_supplemental = ProjectSupplemental()
+            project_supplemental.project_id = request.data["project_id"]
+            project_supplemental.supplemental = supplemental
+            project_supplemental.save()
+
         serializer = SupplementalSerializer(supplemental, context={'request': request})
 
         return Response(serializer.data)
