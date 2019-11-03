@@ -19,7 +19,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from django.contrib import admin
 from codeprojectAPIapp.views import register_user, login_user, Coders, UserViewSet, TechnologyTypes, TaskTypes, Tasks, SupplementalTypes, Technologies
 from codeprojectAPIapp.views import Wireframes, Supplementals, ProjectCollaborators, ProjectSupplementals, ProjectTasks
-from codeprojectAPIapp.views import ProjectTechnologies, ProjectWireframes, Projects
+from codeprojectAPIapp.views import ProjectTechnologies, ProjectWireframes, Projects, CollaboratorInvites
 
 router = routers.DefaultRouter(trailing_slash=False)
 
@@ -37,6 +37,8 @@ router.register(r'projects', Projects, 'project')
 router.register(r'supplementaltypes', SupplementalTypes, 'supplementaltype')
 router.register(r'tasktypes', TaskTypes, 'tasktype')
 router.register(r'technologytypes', TechnologyTypes, 'technologytype')
+router.register(r'collaboratorinvites', CollaboratorInvites, 'collaboratorinvite')
+
 router.register(r'coders', Coders, 'coder')
 router.register(r'users', UserViewSet, 'user')
 
