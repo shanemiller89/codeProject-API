@@ -5,11 +5,12 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from codeprojectAPIapp.models import Project, Coder, Technology, ProjectTechnology
+from codeprojectAPIapp.models import Project, Coder, Technology, ProjectTechnology, ProjectCollaborator
 from .wireframes import WireframeSerializer
 from .technologies import TechnologySerializer
 from .tasks import TaskSerializer
 from .supplemental import SupplementalSerializer
+from .coders import CoderSerializer
 from rest_framework.decorators import action
 
 
@@ -24,6 +25,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     technologies = TechnologySerializer(many=True)
     tasks = TaskSerializer(many=True)
     supplementals = SupplementalSerializer(many=True)
+    collaborators = CoderSerializer(many=True)
 
     class Meta:
         model = Project
@@ -33,7 +35,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         )
         fields = ('id', 'url', 'title', 'repo', 'overview', 'project_image', 'erd_image', 'private',
                   'technologies', 'wireframes', 'tasks', 'supplementals', 'collaborators', 'owner')
-        depth = 1
+        depth = 2
 
 
 class Projects(ViewSet):
@@ -182,3 +184,19 @@ class Projects(ViewSet):
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
+    @action(methods=['get','put'], detail=False)
+    def collaborator(self, request):
+        if request.method == "GET":
+            projects = Project.objects.all()
+            current_user = Coder.objects.get(user=request.auth.user)
+            projects = Project.objects.filter(collaborators__id=current_user.id)
+
+            serializer = ProjectSerializer(
+                projects, many=True, context={'request': request})
+            return Response(serializer.data)
+
+        if request.method == "PUT":
+            project_collaborator = ProjectCollaborator.objects.get(project_id=request.data["project_id"], collaborator_id=request.data["collaborator_id"])
+            project_collaborator.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)

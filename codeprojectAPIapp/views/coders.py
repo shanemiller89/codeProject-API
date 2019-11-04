@@ -64,6 +64,14 @@ class Coders(ViewSet):
         """
         coders = Coder.objects.all()
 
+                #filter by location id
+        users = self.request.query_params.get('users', None)
+
+        if users == "":
+            coders = Coder.objects.all()
+        elif users is not None:
+            coders = Coder.objects.filter(user__username__contains = users.lower())
+
         serializer = CoderSerializer(
             coders,
             many=True,

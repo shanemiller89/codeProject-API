@@ -1,4 +1,5 @@
 from .coder import Coder
+from .collaborator_invite import CollaboratorInvite
 from .project_collaborator import ProjectCollaborator
 from .project_supplemental import ProjectSupplemental
 from .project_task import ProjectTask
