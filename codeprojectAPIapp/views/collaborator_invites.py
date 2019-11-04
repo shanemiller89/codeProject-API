@@ -4,7 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from codeprojectAPIapp.models import CollaboratorInvite
+from codeprojectAPIapp.models import CollaboratorInvite, Coder
 
 
 class CollaboratorInviteSerializer(serializers.HyperlinkedModelSerializer):
@@ -19,11 +19,30 @@ class CollaboratorInviteSerializer(serializers.HyperlinkedModelSerializer):
             view_name='collaboratorinvite',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'collaborator', 'owner', 'message', 'accept')
+        fields = ('id', 'url', 'project','collaborator', 'owner', 'message', 'accept')
+
+        depth = 2
 
 
 class CollaboratorInvites(ViewSet):
     """Collaborator Invites for codeProject"""
+
+    def create(self, request):
+        """Handle POST operations
+
+        Returns:
+            Response -- JSON serialized Task instance
+        """
+        invite = CollaboratorInvite()
+        invite.project_id = request.data["project_id"]
+        invite.collaborator_id = request.data["collaborator_id"]
+        invite.owner = Coder.objects.get(user=request.auth.user)
+        invite.message = request.data["message"]
+        invite.save()
+
+        serializer = CollaboratorInviteSerializer(invite, context={'request': request})
+
+        return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for Collaborator Invites

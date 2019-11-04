@@ -4,6 +4,7 @@ from .coder import Coder
 
 class CollaboratorInvite(models.Model):
 
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     collaborator = models.ForeignKey(Coder, on_delete=models.CASCADE, related_name="collaboratorinvite")
     owner = models.ForeignKey(Coder, on_delete=models.CASCADE, related_name="ownerinvite")
     message = models.TextField()
