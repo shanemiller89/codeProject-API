@@ -4,7 +4,9 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from codeprojectAPIapp.models import CollaboratorInvite, Coder
+from codeprojectAPIapp.models import CollaboratorInvite, Coder, ProjectCollaborator
+from rest_framework.decorators import action
+
 
 
 class CollaboratorInviteSerializer(serializers.HyperlinkedModelSerializer):
@@ -44,6 +46,29 @@ class CollaboratorInvites(ViewSet):
 
         return Response(serializer.data)
 
+    def update(self, request, pk=None):
+        """Handle PUT requests for a Project
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        invite = CollaboratorInvite.objects.get(pk=pk)
+        
+        if request.data["accept"] == True:
+            project_collaborator = ProjectCollaborator()
+            project_collaborator.project = invite.project
+            project_collaborator.collaborator = invite.collaborator
+            project_collaborator.save()
+            invite.delete()
+        elif request.data["accept"] == False:
+            invite.accept == False
+            invite.save()
+
+
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+
     def retrieve(self, request, pk=None):
         """Handle GET requests for Collaborator Invites
 
@@ -64,9 +89,21 @@ class CollaboratorInvites(ViewSet):
             Response -- JSON serialized list of collaborator invites
         """
         collaborator_invites = CollaboratorInvite.objects.all()
+
         serializer = CollaboratorInviteSerializer(
             collaborator_invites,
             many=True,
             context={'request': request}
         )
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def myinvites(self, request):
+
+        invites = CollaboratorInvite.objects.all()
+        current_user = Coder.objects.get(user=request.auth.user)
+        invites = CollaboratorInvite.objects.filter(collaborator=current_user)
+
+        serializer = CollaboratorInviteSerializer(
+            invites, many=True, context={'request': request})
         return Response(serializer.data)

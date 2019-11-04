@@ -33,7 +33,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         )
         fields = ('id', 'url', 'title', 'repo', 'overview', 'project_image', 'erd_image', 'private',
                   'technologies', 'wireframes', 'tasks', 'supplementals', 'collaborators', 'owner')
-        depth = 1
+        depth = 2
 
 
 class Projects(ViewSet):

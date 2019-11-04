@@ -20,7 +20,7 @@ class ProjectCollaboratorSerializer(serializers.HyperlinkedModelSerializer):
             view_name='project_collaborator',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'project_id', 'coder_id')
+        fields = ('id', 'url', 'project_id', 'collaborator_id')
 
 
 class ProjectCollaborators(ViewSet):
