@@ -62,7 +62,7 @@ class CollaboratorInvites(ViewSet):
             invite.delete()
         elif request.data["accept"] == False:
             invite.accept == False
-            invite.save()
+            invite.delete()
 
 
 
