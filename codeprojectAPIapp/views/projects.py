@@ -25,6 +25,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     technologies = TechnologySerializer(many=True)
     tasks = TaskSerializer(many=True)
     supplementals = SupplementalSerializer(many=True)
+    owner = CoderSerializer(many=False)
     collaborators = CoderSerializer(many=True)
 
     class Meta:
@@ -34,7 +35,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'title', 'repo', 'overview', 'project_image', 'erd_image', 'private',
-                  'technologies', 'wireframes', 'tasks', 'supplementals', 'collaborators', 'owner')
+                  'technologies', 'wireframes', 'tasks', 'supplementals', 'collaborators', 'owner_id','owner')
         depth = 2
 
 
@@ -155,6 +156,17 @@ class Projects(ViewSet):
         projects = Project.objects.all()
         current_user = Coder.objects.get(user=request.auth.user)
         projects = Project.objects.filter(owner=current_user)
+
+        serializer = ProjectSerializer(
+            projects, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def recent(self, request):
+
+        projects = Project.objects.all()
+        current_user = Coder.objects.get(user=request.auth.user)
+        projects = Project.objects.filter(owner=current_user)[:5]
 
         serializer = ProjectSerializer(
             projects, many=True, context={'request': request})
