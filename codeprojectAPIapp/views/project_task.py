@@ -4,7 +4,10 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from codeprojectAPIapp.models import ProjectTask
+from codeprojectAPIapp.models import ProjectTask, Coder
+from .tasks import TaskSerializer
+from rest_framework.decorators import action
+
 
 
 class ProjectTaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -13,14 +16,19 @@ class ProjectTaskSerializer(serializers.HyperlinkedModelSerializer):
 
     Arguments:
         serializers.HyperlinkedModelSerializer
+
     """
+
+    task = TaskSerializer(many=False)
     class Meta:
         model = ProjectTask
         url = serializers.HyperlinkedIdentityField(
             view_name='project_task',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'project_id', 'task_id')
+        fields = ('id', 'url', 'project', 'task')
+
+        depth = 1
 
 
 class ProjectTasks(ViewSet):
@@ -45,7 +53,25 @@ class ProjectTasks(ViewSet):
         Returns:
             Response -- JSON serialized list of project Tasks
         """
-        project_task = ProjectTask.objects.all()
+
+        project_task= ProjectTask.objects.all()
+        current_user = Coder.objects.get(user=request.auth.user)
+        project_task = ProjectTask.objects.filter(project__owner=current_user, task__task_type_id=1)[:5]
+
+        serializer = ProjectTaskSerializer(
+            project_task,
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+    
+    @action(methods=['get'], detail=False)
+    def recentcollabtasks(self, request):
+
+        project_task= ProjectTask.objects.all()
+        current_user = Coder.objects.get(user=request.auth.user)
+        project_task = ProjectTask.objects.filter(project__collaborators=current_user, task__task_type_id=1)[:5]
+
         serializer = ProjectTaskSerializer(
             project_task,
             many=True,

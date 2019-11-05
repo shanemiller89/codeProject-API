@@ -21,7 +21,7 @@ class CollaboratorInviteSerializer(serializers.HyperlinkedModelSerializer):
             view_name='collaboratorinvite',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'project','collaborator', 'owner', 'message', 'accept')
+        fields = ('id', 'url', 'project','collaborator', 'owner_id','owner', 'message', 'accept')
 
         depth = 2
 
@@ -103,6 +103,17 @@ class CollaboratorInvites(ViewSet):
         invites = CollaboratorInvite.objects.all()
         current_user = Coder.objects.get(user=request.auth.user)
         invites = CollaboratorInvite.objects.filter(collaborator=current_user)
+
+        serializer = CollaboratorInviteSerializer(
+            invites, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def pendinginvites(self, request):
+
+        invites = CollaboratorInvite.objects.all()
+        current_user = Coder.objects.get(user=request.auth.user)
+        invites = CollaboratorInvite.objects.filter(owner=current_user, accept=None)[:5]
 
         serializer = CollaboratorInviteSerializer(
             invites, many=True, context={'request': request})
