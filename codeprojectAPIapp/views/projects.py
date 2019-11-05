@@ -162,7 +162,7 @@ class Projects(ViewSet):
         return Response(serializer.data)
 
     @action(methods=['get'], detail=False)
-    def recent(self, request):
+    def recentpersonal(self, request):
 
         projects = Project.objects.all()
         current_user = Coder.objects.get(user=request.auth.user)
@@ -171,6 +171,17 @@ class Projects(ViewSet):
         serializer = ProjectSerializer(
             projects, many=True, context={'request': request})
         return Response(serializer.data)
+    
+    @action(methods=['get'], detail=False)
+    def recentcollaborator(self, request):
+
+            projects = Project.objects.all()
+            current_user = Coder.objects.get(user=request.auth.user)
+            projects = Project.objects.filter(collaborators__id=current_user.id)[:5]
+
+            serializer = ProjectSerializer(
+                projects, many=True, context={'request': request})
+            return Response(serializer.data)
 
     @action(methods=['put'], detail=False)
     def overview(self, request):

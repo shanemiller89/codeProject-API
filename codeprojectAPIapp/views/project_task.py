@@ -6,6 +6,8 @@ from rest_framework import serializers
 from rest_framework import status
 from codeprojectAPIapp.models import ProjectTask, Coder
 from .tasks import TaskSerializer
+from rest_framework.decorators import action
+
 
 
 class ProjectTaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -55,6 +57,20 @@ class ProjectTasks(ViewSet):
         project_task= ProjectTask.objects.all()
         current_user = Coder.objects.get(user=request.auth.user)
         project_task = ProjectTask.objects.filter(project__owner=current_user, task__task_type_id=1)[:5]
+
+        serializer = ProjectTaskSerializer(
+            project_task,
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+    
+    @action(methods=['get'], detail=False)
+    def recentcollabtasks(self, request):
+
+        project_task= ProjectTask.objects.all()
+        current_user = Coder.objects.get(user=request.auth.user)
+        project_task = ProjectTask.objects.filter(project__collaborators=current_user, task__task_type_id=1)[:5]
 
         serializer = ProjectTaskSerializer(
             project_task,
